@@ -8,8 +8,12 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-    
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        arch: [x86, arm]
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
