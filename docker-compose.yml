@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  pikvm-client:
+    build: .
+    container_name: pikvm-client-service
+    environment:
+      - PIKVM_HOST=${PIKVM_HOST:-192.168.1.20}
+      - PIKVM_USERNAME=${PIKVM_USERNAME:-admin}
+      - PIKVM_PASSWORD=${PIKVM_PASSWORD}
+      - GRPC_PORT=${GRPC_PORT:-50051}
+      - DEBUG=${DEBUG:-false}
+    ports:
+      - "${GRPC_PORT:-50051}:50051"
+    restart: unless-stopped
