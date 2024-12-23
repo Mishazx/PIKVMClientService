@@ -26,7 +26,7 @@ if _version_not_supported:
 
 
 class PikvmControlServiceStub(object):
-    """Service definition
+    """Service for controlling PI-KVM device
     """
 
     def __init__(self, channel):
@@ -63,11 +63,11 @@ class PikvmControlServiceStub(object):
 
 
 class PikvmControlServiceServicer(object):
-    """Service definition
+    """Service for controlling PI-KVM device
     """
 
     def PowerControl(self, request, context):
-        """Power management
+        """Power control methods
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -80,14 +80,14 @@ class PikvmControlServiceServicer(object):
         raise NotImplementedError('Method not implemented!')
 
     def UploadMSDImage(self, request, context):
-        """Mass Storage Drive
+        """Media and storage methods
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def SwitchGPIO(self, request, context):
-        """GPIO Control
+        """GPIO control methods
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -136,7 +136,7 @@ def add_PikvmControlServiceServicer_to_server(servicer, server):
 
  # This class is part of an EXPERIMENTAL API.
 class PikvmControlService(object):
-    """Service definition
+    """Service for controlling PI-KVM device
     """
 
     @staticmethod

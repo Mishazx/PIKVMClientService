@@ -13,8 +13,8 @@ import os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 from settings import settings
-from Controllers.pikvm import PikvmController
-from Controllers.WebSocket import PikvmWebSocketClient
+from controllers.pikvm import PikvmController
+from controllers.WebSocket import PikvmWebSocketClient
 from grpc_server import serve as grpc_serve
 
 class MongoDBHandler:

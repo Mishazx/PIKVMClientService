@@ -6,30 +6,13 @@ import sys
 import os
 
 # Add project root to Python path
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-
-# Import settings
-from settings import settings
-
-# Ensure gRPC generated files can be imported
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-
-# Generate gRPC code
-from grpc_tools import protoc
-protoc.main((
-    '',
-    '-I.',
-    '--python_out=.',
-    '--grpc_python_out=.',
-    'protos/pikvm_service.proto'
-))
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # Import generated modules
-import pikvm_service_pb2
-import pikvm_service_pb2_grpc
+from generated import pikvm_service_pb2, pikvm_service_pb2_grpc
 
 # Import the PIKVM controller
-from Controllers.pikvm import PikvmController
+from controllers.pikvm import PikvmController
 
 class PikvmControlService(pikvm_service_pb2_grpc.PikvmControlServiceServicer):
     def __init__(self):
@@ -45,10 +28,10 @@ class PikvmControlService(pikvm_service_pb2_grpc.PikvmControlServiceServicer):
         try:
             # Map protobuf enum to controller method
             action_map = {
-                pikvm_service_pb2.ON: 'on',
-                pikvm_service_pb2.OFF: 'off',
-                pikvm_service_pb2.OFF_HARD: 'off_hard',
-                pikvm_service_pb2.RESET_HARD: 'reset_hard'
+                pikvm_service_pb2.PowerControlRequest.ON: 'on',
+                pikvm_service_pb2.PowerControlRequest.OFF: 'off',
+                pikvm_service_pb2.PowerControlRequest.OFF_HARD: 'off_hard',
+                pikvm_service_pb2.PowerControlRequest.RESET_HARD: 'reset_hard'
             }
             
             # Call power control
@@ -76,9 +59,9 @@ class PikvmControlService(pikvm_service_pb2_grpc.PikvmControlServiceServicer):
         try:
             # Map protobuf enum to controller method
             button_map = {
-                pikvm_service_pb2.POWER: 'power',
-                pikvm_service_pb2.POWER_LONG: 'power_long',
-                pikvm_service_pb2.RESET: 'reset'
+                pikvm_service_pb2.ButtonClickRequest.POWER: 'power',
+                pikvm_service_pb2.ButtonClickRequest.POWER_LONG: 'power_long',
+                pikvm_service_pb2.ButtonClickRequest.RESET: 'reset'
             }
             
             # Call button click
@@ -170,23 +153,40 @@ class PikvmControlService(pikvm_service_pb2_grpc.PikvmControlServiceServicer):
                 message=str(e)
             )
 
-def serve():
+def serve(port=50051):
     """
     Start the gRPC server
+    
+    :param port: Port to run the gRPC server on
     """
+    # Configure logging
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    )
+    logger = logging.getLogger(__name__)
+
+    # Create gRPC server
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
+    
+    # Add service to server
     pikvm_service_pb2_grpc.add_PikvmControlServiceServicer_to_server(
         PikvmControlService(), server
     )
     
-    # Use port from settings
-    port = settings.grpc_port
+    # Add insecure port
     server.add_insecure_port(f'[::]:{port}')
     
-    logging.info(f"Starting gRPC server on port {port}")
+    # Start server
+    logger.info(f"Starting gRPC server on port {port}")
     server.start()
-    server.wait_for_termination()
+    
+    # Keep server running
+    try:
+        server.wait_for_termination()
+    except KeyboardInterrupt:
+        logger.info("Server stopped")
+        server.stop(0)
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO)
     serve()

@@ -22,7 +22,7 @@ RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
 # Copy the entire project
-COPY . .
+COPY src .
 
 # Generate gRPC code
 RUN python -m grpc_tools.protoc \
