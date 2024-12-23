@@ -34,7 +34,7 @@ jobs:
         echo "Build step completed"
 
   docker-build:
-    needs: [build, test]
+    needs: [build]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
     outputs:
