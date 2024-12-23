@@ -33,23 +33,6 @@ jobs:
         # Здесь можно добавить команды для сборки, если нужно
         echo "Build step completed"
 
-  test:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.10'
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-
   docker-build:
     needs: [build, test]
     runs-on: ubuntu-latest
@@ -64,7 +47,7 @@ jobs:
       id: docker_meta
       uses: docker/metadata-action@v4
       with:
-        images: ${{ secrets.DOCKERHUB_USERNAME }}/pikvm-client-service:dev
+        images: ${{ secrets.DOCKERHUB_USERNAME }}/pikvm-client-service
         tags: |
           type=sha,format=long
           type=ref,event=branch
