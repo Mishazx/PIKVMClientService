@@ -13,7 +13,7 @@ class PikvmSettings(BaseModel):
     """
     # Connection settings
     host: str = Field(
-        default=os.getenv('PIKVM_HOST', '192.168.1.20'), 
+        default=os.getenv('PIKVM_HOST'), 
         description="PI-KVM host address"
     )
     username: str = Field(
